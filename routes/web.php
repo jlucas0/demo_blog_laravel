@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::controller(\App\Http\Controllers\PostWebController::class)->group(function () {
+    Route::get('/', 'home')->name('home');
+    
+    Route::get('/post/{slug}', 'post')->name('post');
 });
