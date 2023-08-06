@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Adapters\PostAdapter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
@@ -17,7 +18,20 @@ class PostWebController extends Controller
      */
     public function home(Request $request) : View{
 
-        return view('posts.list');
+        $page = $request->page ?? 1;
+        
+        $offset = 0;
+
+        //Calculates the offset
+        if(is_numeric($page) && $page > 1){
+            $page = (int)$page;
+            $offset = ($page - 1) * PostAdapter::DEFAULT_LIST_AMOUNT;
+        }
+
+        //Get results ordered by its create date and considering current pagination
+        $results = PostAdapter::getList(PostAdapter::DEFAULT_LIST_AMOUNT,$offset,'created_at',false);
+
+        return view('posts.list',["posts" => $results,"page"=>$page]);
     }
 
     /**

@@ -16,9 +16,17 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
+        //Generates a random html and removes <html>,<head> and <body> tags
+        $text = fake()->randomHtml();
+        $text = substr($text,strpos($text,'<body>')+6);
+        $text = substr($text,0,strpos($text,"</body>"));
+
+        
         return [
             'title' => fake()->sentence(),
-            'post' => fake()->text(),
+            'slug' => fake()->unique()->slug(),
+            'extract' => fake()->text(),
+            'post' => $text,
         ];
     }
 }
