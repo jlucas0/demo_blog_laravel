@@ -71,8 +71,21 @@ class PostAdapter implements Adapter{
         return $results;
     }
 
+    /**
+     * Find one post by id
+     * @param int $id
+     * @return Post|null Found model or null if not found
+     */
     public static function findById(int $id) : Post|null{
-        return Post::find($id);
+        $post = null;
+
+        try{
+            $post = Post::with("author")->find($id);
+        }catch(\Exception $e){
+            Log::error($e);
+        }
+
+        return $post;
     }
 
     /**

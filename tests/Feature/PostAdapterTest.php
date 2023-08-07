@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Adapters\PostAdapter;
 use App\Models\Author;
+use App\Models\Post;
 use Illuminate\Support\Facades\Artisan;
 
 
@@ -95,6 +96,19 @@ class PostAdapterTest extends TestCase
 
         //Existing slug
         $post = PostAdapter::findBySlug("valid-slug");
-        $this->assertInstanceOf(\App\Models\Post::class,$post);
+        $this->assertInstanceOf(Post::class,$post);
+    }
+
+    public function test_find_by_id(): void{
+        //Run migrations
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->hasPosts(1)->create();
+
+        //Not existing id
+        $this->assertNull(PostAdapter::findById(2));
+        //Valid id
+        $post = PostAdapter::findById(1);
+        $this->assertNotNull($post);
+        $this->assertInstanceOf(Post::class,$post);
     }
 }

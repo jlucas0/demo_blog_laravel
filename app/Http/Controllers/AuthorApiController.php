@@ -8,17 +8,16 @@ use Illuminate\Http\JsonResponse;
 use App\Adapters\AuthorAdapter;
 use Illuminate\Http\Request;
 
-/**
- * @OA\Info(title="Authors",version="1")
- */
+
 class AuthorApiController extends ApiController{
     use ValidatesFields;
 
     /**
      * @OA\Get(
      *     path="/api/author/{id}",
-     *     tags={"author"},
-     *     summary="Find author by ID",
+     *     tags={"Authors"},
+     *     summary="Find by ID",
+     *     description="Find one author by its ID",
      *     description="Returns a single author",
      *     @OA\Parameter(
      *         name="id",
@@ -57,6 +56,7 @@ class AuthorApiController extends ApiController{
             $this->status = 2;
             $this->message = "Author with id $id retrieved";
             $this->payload = $author;
+            $this->payload->post_count = $author->post_count;
         }
 
         return $this->generateResponse();
@@ -65,8 +65,9 @@ class AuthorApiController extends ApiController{
     /**
      * @OA\Put(
      *  path="/api/author/login",
-     *  tags={"login"},
-     *  summary="Performs login attempt and retrieves access token if success",
+     *  tags={"Authors"},
+     *  summary="Login",
+     *  description="Performs login attempt and retrieves access token if success",
      *  @OA\RequestBody(
      *      required=true,
      *      @OA\MediaType(

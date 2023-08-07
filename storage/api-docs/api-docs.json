@@ -1,16 +1,16 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Authors",
+        "title": "Demo Blog Api",
         "version": "1"
     },
     "paths": {
         "/api/author/{id}": {
             "get": {
                 "tags": [
-                    "author"
+                    "Authors"
                 ],
-                "summary": "Find author by ID",
+                "summary": "Find by ID",
                 "description": "Returns a single author",
                 "operationId": "d4fb0358eb484f36f719ae61f5d589bb",
                 "parameters": [
@@ -55,9 +55,10 @@
         "/api/author/login": {
             "put": {
                 "tags": [
-                    "login"
+                    "Authors"
                 ],
-                "summary": "Performs login attempt and retrieves access token if success",
+                "summary": "Login",
+                "description": "Performs login attempt and retrieves access token if success",
                 "operationId": "c9b880bd175fd6021527e4ccd55798fd",
                 "requestBody": {
                     "required": true,
@@ -108,6 +109,53 @@
                     }
                 }
             }
+        },
+        "/api/post/{id}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Find by ID",
+                "description": "Returns a single post",
+                "operationId": "d31af682add10e50941f21e84f36d436",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of post to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Author with id 3 retrieved"
+                                        },
+                                        "payload": {
+                                            "$ref": "#/components/schemas/Post"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -126,6 +174,55 @@
                     "email": {
                         "type": "string",
                         "example": "great@author.au"
+                    },
+                    "post_count": {
+                        "type": "integer",
+                        "example": "5"
+                    }
+                },
+                "type": "object"
+            },
+            "Post": {
+                "title": "Post",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "3"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Aperiam quis nisi laboriosam."
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "voluptatem-quos-magni-nam-sunt-magni-tenetur"
+                    },
+                    "post": {
+                        "type": "string",
+                        "example": "<p>HTML content</p>"
+                    },
+                    "author_id": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "extract": {
+                        "type": "string",
+                        "example": "Omnis quas at est sequi maiores maiores quis debitis. Sed quis et nihil neque quibusdam ut. Harum labore aut dolores. Tempora eveniet natus voluptates error aliquid ut id."
+                    },
+                    "visits": {
+                        "type": "integer",
+                        "example": "3"
+                    },
+                    "created_at": {
+                        "type": "date-time",
+                        "example": "2023-08-06 18:49:58"
+                    },
+                    "updated_at": {
+                        "type": "date-time",
+                        "example": "2023-08-06 18:49:58"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/Author"
                     }
                 },
                 "type": "object"

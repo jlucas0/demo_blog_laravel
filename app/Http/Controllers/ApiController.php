@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-
+/**
+ * @OA\Info(title="Demo Blog Api",version="1")
+ */
 abstract class ApiController extends Controller{
 
     /**

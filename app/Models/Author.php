@@ -14,7 +14,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * 	@OA\Property(property="id", type="integer", example="3"),
  *  @OA\Property(property="name", type="string", example="Great Author"),
  *  @OA\Property(property="email", type="string", example="great@author.au"),
+ *  @OA\Property(property="post_count", type="integer", example="5"),
  * )
+ *  @property int $id
+ *  @property string $name
+ *  @property string $email
+ *  @property int $post_count
  */
 class Author extends User
 {
