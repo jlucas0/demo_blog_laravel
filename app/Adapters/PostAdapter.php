@@ -3,13 +3,15 @@
 namespace App\Adapters;
 
 use App\Models\Post;
-use App\Exceptions\InvalidFieldException;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
+use App\Exceptions\InvalidFieldException;
+use Illuminate\Validation\Rule;
+use App\Traits\ValidatesFields;
 
 class PostAdapter implements Adapter{
+
+    use ValidatesFields;
 
     /**
      * Default number of posts to be loaded
@@ -29,7 +31,7 @@ class PostAdapter implements Adapter{
 
         $results = new Collection;
         //Validate all parameters
-        $validator = Validator::make(
+        self::validate(
             [
                 "amount" => $amount,
                 "offset" => $offset,
@@ -44,10 +46,6 @@ class PostAdapter implements Adapter{
             ]
         );
 
-        if($validator->fails()){
-            throw new InvalidFieldException($validator->messages()->toJson());
-        }
-               
         //Prepare the query
         $query = Post::query();
 
@@ -73,8 +71,36 @@ class PostAdapter implements Adapter{
         return $results;
     }
 
-    public static function findById(int $id) : Post{
-        return new Post();
+    public static function findById(int $id) : Post|null{
+        return Post::find($id);
+    }
+
+    /**
+     * Retrieves one post by it's slug
+     * @param string $slug Unique slug of the post
+     * @return Post|null Returns the found post or null
+     */
+    public static function findBySlug(string $slug) : Post|null{
+        
+        $post = null;
+
+        //Check that slug is not empty
+        self::validate(
+            [
+                "slug" => $slug,
+            ],
+            [
+                "slug" => ["required","string"],
+            ]
+        );
+
+        try{
+            $post = Post::with('author')->where('slug',$slug)->first();
+        }catch(\Exception $e){
+            Log::error($e);
+        }
+
+        return $post;
     }
 
     public static function create(array $params) : bool{

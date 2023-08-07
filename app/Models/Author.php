@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User;
 use Laravel\Sanctum\HasApiTokens;
 use \Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Author extends User
 {
@@ -46,5 +47,15 @@ class Author extends User
      */
     public function posts() : HasMany{
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Accessor to calculate author's number of posts.
+     */
+    protected function postCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->posts()->count(),
+        );
     }
 }

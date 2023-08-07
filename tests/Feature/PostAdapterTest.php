@@ -12,20 +12,15 @@ use Illuminate\Support\Facades\Artisan;
 
 class PostAdapterTest extends TestCase
 {
-
-    /* Invalid parameters tests */
-    public function test_list_invalid_amount(): void
-    {
+    public function test_list_invalid_amount(): void{
         $this->expectException(\App\Exceptions\InvalidFieldException::class);
         PostAdapter::getList(-1);
     }
-    public function test_list_invalid_offset(): void
-    {
+    public function test_list_invalid_offset(): void{
         $this->expectException(\App\Exceptions\InvalidFieldException::class);
         PostAdapter::getList(5,-1);
     }
-    public function test_list_invalid_order_field(): void
-    {
+    public function test_list_invalid_order_field(): void{
         $this->expectException(\App\Exceptions\InvalidFieldException::class);
         PostAdapter::getList(5,0,"invalid_field");
     }
@@ -79,5 +74,24 @@ class PostAdapterTest extends TestCase
         //Full list
         $result = PostAdapter::getList(0);
         $this->assertCount(PostAdapter::getCount(),$result);
+    }
+
+    public function test_find_with_invalid_slug(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        PostAdapter::findBySlug("");
+    }
+
+    public function test_find_by_slug(): void{
+        //Not existing slug
+        $this->assertNull(PostAdapter::findBySlug("not-exists"));
+
+        //Run migrations
+        Artisan::call('migrate:fresh');
+        //Create 1 post
+        Author::factory(1)->hasPosts(1,['slug' => "valid-slug"])->create();
+
+        //Existing slug
+        $post = PostAdapter::findBySlug("valid-slug");
+        $this->assertInstanceOf(\App\Models\Post::class,$post);
     }
 }

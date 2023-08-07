@@ -40,6 +40,14 @@ class PostWebController extends Controller
      * @return View
      */
     public function post(string $slug) : View{
-        return view('posts.post');
+
+        $post = PostAdapter::findBySlug($slug);
+
+        //Show 404 error if post not found
+        if(empty($post)){
+            abort(404);
+        }
+
+        return view('posts.post',["post" => $post]);
     }
 }
