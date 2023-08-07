@@ -1,0 +1,70 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Authors",
+        "version": "1"
+    },
+    "paths": {
+        "/api/author/{id}": {
+            "get": {
+                "tags": [
+                    "author"
+                ],
+                "summary": "Find author by ID",
+                "description": "Returns a single author",
+                "operationId": "d4fb0358eb484f36f719ae61f5d589bb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of author to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "operation completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Author with id 3 retrieved"
+                                        },
+                                        "payload": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": "3"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Great Author"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "great@author.au"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

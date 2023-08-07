@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Artisan;
 
 class PostAdapterTest extends TestCase
 {
+
+    use RefreshDatabase;
+
     public function test_list_invalid_amount(): void{
         $this->expectException(\App\Exceptions\InvalidFieldException::class);
         PostAdapter::getList(-1);
