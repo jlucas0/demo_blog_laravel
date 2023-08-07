@@ -156,6 +156,91 @@
                     }
                 }
             }
+        },
+        "/api/post/list": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "List of posts",
+                "description": "Get complete list of posts with pagination options",
+                "operationId": "d9c55bd0f40e49e0e0878893d1035501",
+                "parameters": [
+                    {
+                        "name": "results",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "description": "Amount of post to be retrieved (by default all), starting by order field (default id) and ignoring first n posts specified by offset parameter (default 0)",
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "description": "Ignore first n posts (by default 0)",
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "order_field",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "description": "Determines field to order results (by default id)",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "order_ascending",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "description": "Determines if order is ascending (default) or descending",
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List retrieved"
+                                        },
+                                        "payload": {
+                                            "properties": {
+                                                "total_posts": {
+                                                    "type": "integer",
+                                                    "example": "50"
+                                                },
+                                                "retrieved_posts": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Post"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

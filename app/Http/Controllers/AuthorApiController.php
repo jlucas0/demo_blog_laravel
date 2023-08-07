@@ -125,7 +125,7 @@ class AuthorApiController extends ApiController{
                 $this->status = 3;
                 $this->message = "Some fields are incorrect";
                 $errors = (array)json_decode($ife->getMessage(),true);//Casting just to ensure PHPStan Validation
-                foreach($errors as $field => $fieldErrors){
+                foreach($errors as $fieldErrors){
                     $fieldErrors = (array)$fieldErrors;
                     foreach($fieldErrors as $error){
                         if(gettype($error) == "string"){ //Just to avoid PHPStan problem with mixed result of standard json_decode function

@@ -23,8 +23,8 @@ Route::controller(\App\Http\Controllers\AuthorApiController::class)->prefix('aut
 
 Route::controller(\App\Http\Controllers\PostApiController::class)->prefix('post')->group(function(){
 
+    Route::get('/list','list');
     Route::get('/{id}','findById');
-    // Route::get('/list','list');
     // Route::middleware('auth:sanctum')->post('/create','create');
 
 });

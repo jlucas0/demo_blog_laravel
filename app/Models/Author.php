@@ -58,6 +58,13 @@ class Author extends User
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<string>
+     */
+    protected $appends = ['post_count'];
+
+    /**
      * Get author's posts.
      */
     public function posts() : HasMany{
