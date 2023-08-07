@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::controller(\App\Http\Controllers\AuthorApiController::class)->prefix('author')->group(function(){
+
+    // Route::put('/login','login');
+    // Route::get('/{id}','findById');
+
+});
+
+Route::controller(\App\Http\Controllers\PostApiController::class)->prefix('post')->group(function(){
+
+    // Route::get('/list','list');
+    // Route::middleware('auth:sanctum')->post('/create','create');
+    // Route::get('/{id}','findById');
+
 });
