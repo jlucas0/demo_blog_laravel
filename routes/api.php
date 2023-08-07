@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(\App\Http\Controllers\AuthorApiController::class)->prefix('author')->group(function(){
 
-    // Route::put('/login','login');
+    Route::put('/login','login');
     Route::get('/{id}','findById');
 
 });

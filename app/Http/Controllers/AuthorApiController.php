@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ValidatesFields;
+use App\Exceptions\InvalidFieldException;
 use Illuminate\Http\JsonResponse;
 use App\Adapters\AuthorAdapter;
+use Illuminate\Http\Request;
 
 /**
  * @OA\Info(title="Authors",version="1")
  */
 class AuthorApiController extends ApiController{
+    use ValidatesFields;
+
     /**
      * @OA\Get(
      *     path="/api/author/{id}",
@@ -34,12 +39,9 @@ class AuthorApiController extends ApiController{
      *               @OA\Property(
      *                   property="payload",
      *                   type="object",
-     *                   @OA\Property(property="id", type="integer", example="3"),
-     *                   @OA\Property(property="name", type="string", example="Great Author"),
-     *                   @OA\Property(property="email", type="string", example="great@author.au"),
+     *                   ref="#/components/schemas/Author",
      *               ),
      *        )
-     *     )
      *     )
      * )
      *
@@ -60,4 +62,82 @@ class AuthorApiController extends ApiController{
         return $this->generateResponse();
     }
 
+    /**
+     * @OA\Put(
+     *  path="/api/author/login",
+     *  tags={"login"},
+     *  summary="Performs login attempt and retrieves access token if success",
+     *  @OA\RequestBody(
+     *      required=true,
+     *      @OA\MediaType(
+     *          mediaType="application/json",
+     *          @OA\Schema(
+     *              @OA\Property(
+     *                  property="email",
+     *                  type="string"
+     *              ),
+     *              @OA\Property(
+     *                  property="password",
+     *                  type="string"
+     *              )
+     *          ),
+     *          example={"email": "winona78@example.net","password": "password"}
+     *      )
+     *  ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Operation completed",
+     *          @OA\JsonContent(
+     *               @OA\Property(property="status", type="integer", example="2"),
+     *               @OA\Property(property="message", type="string", example="Login success"),
+     *               @OA\Property(
+     *                   property="payload",
+     *                   type="string",
+     *                   example="1|gXppSgPS7E2UMGF8jsMGJuM7FM5MSYH2BAfmmSsT",
+     *               ),
+     *        )
+     *     )
+     * )
+     */
+    public function login(Request $request) : JsonResponse{
+        $json = (array)json_decode((string)$request->getContent(),true); //Casting just to ensure PHPStan Validation
+        if(!empty($json)){
+            //Check valid JSON
+            try{
+                self::validateFields($json,[
+                    "email"=>["required","email"],
+                    "password"=>["required","string"]
+                ]);
+                $token = AuthorAdapter::login(
+                    gettype($json["email"]) == "string" ? $json["email"] : "",
+                    gettype($json["password"]) == "string" ? $json["password"] : "",
+                    true
+                );//Type verification just to avoid PHPStan problem with mixed result of standard json_decode function
+                if($token){
+                    $this->message = "Login success";
+                    $this->status = 2;
+                    $this->payload = $token;
+                }else{
+                    $this->message = "Login failed";
+                }
+            }catch(InvalidFieldException $ife){
+                $this->status = 3;
+                $this->message = "Some fields are incorrect";
+                $errors = (array)json_decode($ife->getMessage(),true);//Casting just to ensure PHPStan Validation
+                foreach($errors as $field => $fieldErrors){
+                    $fieldErrors = (array)$fieldErrors;
+                    foreach($fieldErrors as $error){
+                        if(gettype($error) == "string"){ //Just to avoid PHPStan problem with mixed result of standard json_decode function
+                            $this->errors[] = $error;
+                        }
+                    }
+                }
+            }
+        }else{
+            $this->status = 3;
+            $this->message = "Invalid JSON provided";
+        }
+
+        return $this->generateResponse();
+    }
 }

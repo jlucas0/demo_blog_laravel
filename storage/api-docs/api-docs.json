@@ -27,7 +27,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "operation completed",
+                        "description": "Operation completed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -41,21 +41,7 @@
                                             "example": "Author with id 3 retrieved"
                                         },
                                         "payload": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": "3"
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "Great Author"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "great@author.au"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/Author"
                                         }
                                     },
                                     "type": "object"
@@ -64,6 +50,85 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/author/login": {
+            "put": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Performs login attempt and retrieves access token if success",
+                "operationId": "c9b880bd175fd6021527e4ccd55798fd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "email": "winona78@example.net",
+                                "password": "password"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login success"
+                                        },
+                                        "payload": {
+                                            "type": "string",
+                                            "example": "1|gXppSgPS7E2UMGF8jsMGJuM7FM5MSYH2BAfmmSsT"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Author": {
+                "title": "Author",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "3"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Great Author"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "great@author.au"
+                    }
+                },
+                "type": "object"
             }
         }
     }

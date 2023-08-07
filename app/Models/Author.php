@@ -8,6 +8,14 @@ use Laravel\Sanctum\HasApiTokens;
 use \Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+/**
+ * @OA\Schema(
+ *  title="Author",
+ * 	@OA\Property(property="id", type="integer", example="3"),
+ *  @OA\Property(property="name", type="string", example="Great Author"),
+ *  @OA\Property(property="email", type="string", example="great@author.au"),
+ * )
+ */
 class Author extends User
 {
     use HasApiTokens, HasFactory;

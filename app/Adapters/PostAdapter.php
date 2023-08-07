@@ -31,7 +31,7 @@ class PostAdapter implements Adapter{
 
         $results = new Collection;
         //Validate all parameters
-        self::validate(
+        self::validateFields(
             [
                 "amount" => $amount,
                 "offset" => $offset,
@@ -85,7 +85,7 @@ class PostAdapter implements Adapter{
         $post = null;
 
         //Check that slug is not empty
-        self::validate(
+        self::validateFields(
             [
                 "slug" => $slug,
             ],

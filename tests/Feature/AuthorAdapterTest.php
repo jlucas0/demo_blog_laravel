@@ -25,4 +25,30 @@ class AuthorAdapterTest extends TestCase
         $this->assertNotNull($author);
         $this->assertInstanceOf(Author::class,$author);
     }
+
+    public function test_login(): void{
+        //Run migrations
+        Artisan::call('migrate:fresh');
+
+        //Not found email
+        $this->assertFalse(AuthorAdapter::login("fake","1234"));
+
+        //Create Author
+        $author = new Author();
+        $author->name = "Testing Author";
+        $author->email = "fake@author.es";
+        $author->password = \Illuminate\Support\Facades\Hash::make("12345");
+        $author->save();
+
+        //Invalid password
+        $this->assertFalse(AuthorAdapter::login("fake@author.es","54321"));
+
+        //Success login with session
+        $this->assertTrue(AuthorAdapter::login("fake@author.es","12345"));
+        $this->assertTrue(\Illuminate\Support\Facades\Auth::check());
+        
+        //Success login with token
+        $this->assertIsString(AuthorAdapter::login("fake@author.es","12345",true));
+        $this->assertCount(1,$author->tokens()->get());
+    }
 }

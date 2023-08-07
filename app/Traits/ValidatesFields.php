@@ -14,7 +14,7 @@ trait ValidatesFields{
      * @return bool Returns true if all fields are valid
      * @throws InvalidFieldException
      */
-    protected static function validate(array $fields, array $rules) : bool{
+    protected static function validateFields(array $fields, array $rules) : bool{
         $response = true;
         $validator = Validator::make($fields,$rules);
 

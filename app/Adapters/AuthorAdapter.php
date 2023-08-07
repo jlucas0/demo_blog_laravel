@@ -5,6 +5,8 @@ namespace App\Adapters;
 use App\Models\Author;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorAdapter implements Adapter{
     
@@ -39,6 +41,40 @@ class AuthorAdapter implements Adapter{
         }
 
         return $author;
+    }
+
+    /**
+     * Performs login with given author
+     * @param string $email
+     * @param string $password Plain text password
+     * @param bool $token Specifies if should generate an api token or not
+     * @return boolean|string Indicates if login was successful. If token is requested, returns it on success login.
+     */
+    public static function login(string $email, string $password, bool $token = false) : bool|string{
+        $success = false;
+        $author = null;
+        $generatedToken = "";
+
+        try{
+            $author = Author::where("email",$email)->first();
+            if(!empty($author)){
+                if(Hash::check($password,$author->password)){
+                    if($token){
+                        $author->tokens()->delete();
+                        $generatedToken = $author->createToken("api");
+                        $success = $generatedToken->plainTextToken;
+                    }else{
+                        session()->regenerate();
+                        Auth::login($author);
+                        $success = true;
+                    }
+                }
+            }
+        }catch(\Exception $e){
+            Log::error($e);
+        }
+
+        return $success;
     }
 
     /**
