@@ -56,7 +56,6 @@ class AuthorApiController extends ApiController{
             $this->status = 2;
             $this->message = "Author with id $id retrieved";
             $this->payload = $author;
-            $this->payload->post_count = $author->post_count;
         }
 
         return $this->generateResponse();

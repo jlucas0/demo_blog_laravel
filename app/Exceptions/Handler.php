@@ -26,5 +26,15 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        //Overrides default sanctum response
+        $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'Authorization failed'
+                ], 401);
+            }
+        });
     }
 }

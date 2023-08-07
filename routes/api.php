@@ -25,6 +25,6 @@ Route::controller(\App\Http\Controllers\PostApiController::class)->prefix('post'
 
     Route::get('/list','list');
     Route::get('/{id}','findById');
-    // Route::middleware('auth:sanctum')->post('/create','create');
+    Route::middleware('auth:sanctum')->post('/create','create');
 
 });

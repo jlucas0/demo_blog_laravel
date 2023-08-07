@@ -116,8 +116,42 @@ class PostAdapter implements Adapter{
         return $post;
     }
 
-    public static function create(array $params) : bool{
-        return false;
+    /**
+     * Creates a new post
+     * @param array<mixed> $params Post needed parameters
+     * @return bool|Post Created post or false
+     */
+    public static function create(array $params) : bool|Post{
+        $result = false;
+
+        //Validate all fields
+        self::validateFields(
+            $params,
+            [
+                "title" => ["required","string","max:100"],
+                "slug" => ["required","string","max:100","unique:posts,slug"],
+                "post" => ["required","string"],
+                "extract" => ["required","string","max:200"],
+                "author_id" => ["required","integer","exists:authors,id"]
+            ]
+        );
+        
+        $post = new Post();
+        //Type verification applied to ensure that types are exact what expected in Post Class, so PHPStan not fails because $params are considered as mixed, but at this point type are ensured by validation
+        $post->title = (gettype($params["title"]) == "string" ? $params["title"] : "");
+        $post->slug = (gettype($params["slug"]) == "string" ? $params["slug"] : "");
+        $post->post = (gettype($params["post"]) == "string" ? $params["post"] : "");
+        $post->extract = (gettype($params["extract"]) == "string" ? $params["extract"] : "");
+        $post->author_id = (is_numeric($params["author_id"]) ? (int)$params["author_id"] : 0);
+
+        try{
+            $post->save();
+            $result = $post;
+        }catch(\Exception $e){
+            Log::error($e);
+        }
+
+        return $result;
     }
 
     /**

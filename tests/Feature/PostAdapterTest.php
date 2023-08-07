@@ -111,4 +111,54 @@ class PostAdapterTest extends TestCase
         $this->assertNotNull($post);
         $this->assertInstanceOf(Post::class,$post);
     }
+
+    public function test_create_invalid_title(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->create();
+        $params = ["slug"=>"ok-slug","extract"=>"ok extract","post"=>"ok post","author_id"=>1];
+        PostAdapter::create($params);
+    }
+    public function test_create_invalid_slug(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->create();
+        $params = ["title"=>"Ok Title","extract"=>"ok extract","post"=>"ok post","author_id"=>1];
+        PostAdapter::create($params);
+    }
+    public function test_create_repeated_slug(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->hasPosts(1,["slug"=>"ok-slug"])->create();
+        $params = ["title"=>"Ok Title","slug"=>"ok-slug","extract"=>"ok extract","post"=>"ok post","author_id"=>1];
+        PostAdapter::create($params);
+    }
+    public function test_create_invalid_post(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->create();
+        $params = ["title"=>"Ok Title","slug"=>"ok-slug","extract"=>"ok extract","author_id"=>1];
+        PostAdapter::create($params);
+    }
+    public function test_create_invalid_extract(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->create();
+        $params = ["title"=>"Ok Title","slug"=>"ok-slug","post"=>"ok post","author_id"=>1];
+        PostAdapter::create($params);
+    }
+    public function test_create_invalid_author_id(): void{
+        $this->expectException(\App\Exceptions\InvalidFieldException::class);
+        Artisan::call('migrate:fresh');
+        $params = ["title"=>"Ok Title","slug"=>"ok-slug","post"=>"ok post","extract"=>"ok extract","author_id"=>1];
+        PostAdapter::create($params);
+    }
+
+    public function test_create(){
+        Artisan::call('migrate:fresh');
+        Author::factory(1)->create();
+        $params = ["title"=>"Ok Title","slug"=>"ok-slug","post"=>"ok post","extract"=>"ok extract","author_id"=>1];
+        $post = PostAdapter::create($params);
+        $this->assertInstanceOf(Post::class,$post);
+    }
 }

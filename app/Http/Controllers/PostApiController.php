@@ -6,6 +6,7 @@ use App\Exceptions\InvalidFieldException;
 use Illuminate\Http\JsonResponse;
 use App\Adapters\PostAdapter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostApiController extends ApiController{
     /**
@@ -156,6 +157,98 @@ class PostApiController extends ApiController{
             }
         }
 
+        return $this->generateResponse();
+    }
+
+    /**
+     * @OA\Post(
+     *  path="/api/post/create",
+     *  tags={"Posts"},
+     *  summary="Create post",
+     *  description="Creates a new post and retrieves created post ID",
+     *  security={{ "sanctum": {} }},
+     *  @OA\RequestBody(
+     *      required=true,
+     *      @OA\MediaType(
+     *          mediaType="application/json",
+     *          @OA\Schema(
+     *              @OA\Property(
+     *                  property="title",
+     *                  type="string",
+     *                  example="New Post"
+     *              ),
+     *              @OA\Property(
+     *                  property="slug",
+     *                  type="string",
+     *                  example="new-post"
+     *              ),
+     *              @OA\Property(
+     *                  property="extract",
+     *                  type="string",
+     *                  example="Short text to describe the post"
+     *              ),
+     *              @OA\Property(
+     *                  property="post",
+     *                  type="string",
+     *                  example="<p>Text of the post which accepts HTML tags</p>"
+     *              ),
+     *          ),
+     *      )
+     *  ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Operation completed",
+     *          @OA\JsonContent(
+     *               @OA\Property(property="status", type="integer", example="2"),
+     *               @OA\Property(property="message", type="string", example="Post created"),
+     *               @OA\Property(
+     *                   property="payload",
+     *                   type="string",
+     *                   example="51",
+     *               ),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Authorization failed",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="integer", example="1"),
+     *              @OA\Property(property="message", type="string", example="Authorization failed"),
+     *          )
+     *     )
+     * )
+     */
+    public function create(Request $request) : JsonResponse{
+        //Retrieves all JSON parameters
+        $json = (array)json_decode((string)$request->getContent(),true); //Casting just to ensure PHPStan Validation
+        if(!empty($json)){
+            //Determines current author's id
+            $json["author_id"] = Auth::id();
+            try{
+                //Creates the post
+                $post = PostAdapter::create($json);
+                if(!empty($post) && $post instanceof \App\Models\Post){
+                    $this->status = 2;
+                    $this->message = "Post created";
+                    $this->payload = $post->id;
+                }
+            }catch(InvalidFieldException $ife){
+                $this->status = 3;
+                $this->message = "Some parameters are incorrect";
+                $errors = (array)json_decode($ife->getMessage(),true);//Casting just to ensure PHPStan Validation
+                foreach($errors as $fieldErrors){
+                    $fieldErrors = (array)$fieldErrors;
+                    foreach($fieldErrors as $error){
+                        if(gettype($error) == "string"){ //Just to avoid PHPStan problem with mixed result of standard json_decode function
+                            $this->errors[] = $error;
+                        }
+                    }
+                }
+            }
+        }else{
+            $this->status = 3;
+            $this->message = "Invalid JSON provided";
+        }
         return $this->generateResponse();
     }
 }
